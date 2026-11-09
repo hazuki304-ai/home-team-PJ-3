@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}ログイン | Home Team PJ{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <div class="eyebrow">WELCOME BACK</div><h1>ログイン</h1><p class="muted">予定・実績・週間レビューをひとつの場所で。</p>
+  <form method="post" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>ユーザーID<input name="user_id" maxlength="50" required autocomplete="username"></label>
+    <label>パスワード<input name="password" type="password" required autocomplete="current-password"></label>
+    <button class="btn btn-primary">ログイン</button>
+  </form>
+  <p class="center muted">アカウントがない場合は <a href="{{ url_for('register') }}">新規登録</a></p>
+</section>
+{% endblock %}

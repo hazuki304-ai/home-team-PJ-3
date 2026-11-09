@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block title %}位置情報{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">LOCATION LOG</div><h1>位置情報の記録</h1><p class="muted">取得はこの画面で開始したときだけ行われます。</p></div></div>
+<section class="panel privacy-note"><b>プライバシーについて</b><p>位置情報の取得にはブラウザの許可が必要です。開始ボタンを押すまで取得せず、停止ボタンでいつでも終了できます。記録はログイン中のアカウントに保存され、他のユーザーからは見えません。</p></section>
+<section class="panel">
+<div class="location-controls"><button id="track-start" class="btn btn-primary">▶ 位置情報の取得を開始</button><button id="track-stop" class="btn btn-quiet" disabled>■ 停止</button></div>
+<div id="location-status" class="muted" aria-live="polite">停止中</div>
+<div class="grid two location-details"><div><span class="muted">現在の座標</span><strong id="coords">未取得</strong></div><div><span class="muted">取得開始からの経過</span><strong id="elapsed">00:00:00</strong></div></div>
+<label class="tag-label">記録タグ<input id="location-tag" maxlength="80" value="手動記録" placeholder="例：学校、図書館"></label>
+<p class="hint">位置情報は30秒以上同じ場所に滞在した場合に自動保存します。また「現在地を記録」ボタンで手動保存できます。</p>
+<button id="save-location-now" class="btn btn-quiet" disabled>現在地を記録</button>
+</section>
+<section class="panel"><div class="section-head"><h2>記録一覧</h2><button id="clear-locations" class="btn btn-danger btn-small">自分の記録をすべて削除</button></div>
+{% if items %}<div class="table-wrap"><table><thead><tr><th>日時</th><th>座標</th><th>滞在時間</th><th>タグ</th><th></th></tr></thead><tbody>
+{% for x in items %}<tr><td>{{ x.timestamp.strftime("%Y-%m-%d %H:%M:%S") }}</td><td>{{ "%.5f"|format(x.latitude) }}, {{ "%.5f"|format(x.longitude) }}<div class="muted">{{ x.address }}</div></td><td>{{ "%02d:%02d:%02d"|format(x.stay_time//3600,(x.stay_time%3600)//60,x.stay_time%60) }}</td><td>{{ x.tag }}</td><td><form method="post" action="{{ url_for('delete_location',rid=x.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-danger btn-small">削除</button></form></td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="empty">位置情報の記録はありません。</p>{% endif %}
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static',filename='js/location.js') }}"></script>{% endblock %}

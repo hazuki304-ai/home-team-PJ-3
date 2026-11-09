@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}新規登録 | Home Team PJ{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <div class="eyebrow">CREATE ACCOUNT</div><h1>新規登録</h1>
+  <form method="post" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>ユーザーID<input name="user_id" maxlength="50" required autocomplete="username"></label>
+    <label>表示名<input name="display_name" maxlength="80" placeholder="ランキングに表示する名前"></label>
+    <label>パスワード（8文字以上）<input name="password" type="password" minlength="8" required autocomplete="new-password"></label>
+    <button class="btn btn-primary">登録する</button>
+  </form>
+  <p class="center muted">すでに登録済みの場合は <a href="{{ url_for('login') }}">ログイン</a></p>
+</section>
+{% endblock %}

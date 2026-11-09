@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% block title %}予定管理{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">SCHEDULE</div><h1>予定管理</h1><p class="muted">1回のみの予定と毎週の予定を登録できます。</p></div></div>
+<section class="panel">
+<h2>予定を追加</h2>
+<form method="post" class="form-grid">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label class="span2">予定名<input name="title" maxlength="120" required placeholder="例：数学の復習"></label>
+<label>活動<select name="activity">{% for a in activities %}<option>{{ a }}</option>{% endfor %}</select></label>
+<label>繰り返し<select name="repeat_type" id="repeat-type"><option>1回のみ</option><option>毎週</option></select></label>
+<label id="date-field">日付<input type="date" name="schedule_date" value="{{ today.isoformat() }}"></label>
+<label id="weekday-field" hidden>曜日<select name="weekday">{% for i in range(7) %}<option value="{{ i }}">{{ weekdays[i] }}曜日</option>{% endfor %}</select></label>
+<label>開始時刻<input type="time" name="start" value="09:00" required></label>
+<label>終了時刻<input type="time" name="end" value="10:00" required></label>
+<div class="span2"><button class="btn btn-primary">予定を追加</button></div>
+</form>
+</section>
+<section class="panel"><h2>登録済みの予定</h2>
+{% if items %}<div class="table-wrap"><table><thead><tr><th>予定名</th><th>活動</th><th>繰り返し</th><th>日時</th><th></th></tr></thead><tbody>
+{% for s in items %}<tr><td>{{ s.title }}</td><td>{{ s.activity }}</td><td>{{ s.repeat_type }}</td><td>{% if s.repeat_type=="毎週" %}毎週{{ weekdays[s.weekday] }}曜日{% else %}{{ s.start.strftime("%Y-%m-%d") }}{% endif %} {{ s.start.strftime("%H:%M") }}–{{ s.end.strftime("%H:%M") }}</td><td><form method="post" action="{{ url_for('delete_schedule',sid=s.id) }}" onsubmit="return confirm('この予定と関連する実績を削除しますか？')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-danger btn-small">削除</button></form></td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="empty">予定はまだ登録されていません。</p>{% endif %}
+</section>
+{% endblock %}

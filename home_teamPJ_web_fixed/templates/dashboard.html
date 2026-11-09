@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block title %}ホーム | Home Team PJ{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">DASHBOARD</div><h1>こんにちは、{{ current_user.display_name }}さん</h1><p class="muted">{{ today.strftime("%Y年%m月%d日") }} の予定と記録</p></div></div>
+<div class="grid three">
+  <article class="panel metric"><span>今日の実績</span><strong>{{ "%.1f"|format(today_minutes/60) }}<small>時間</small></strong><a href="{{ url_for('records') }}">実績を記録 →</a></article>
+  <article class="panel metric"><span>今日の予定</span><strong>{{ today_items|length }}<small>件</small></strong><a href="{{ url_for('schedules') }}">予定を確認 →</a></article>
+  <article class="panel metric"><span>週間レビュー</span><strong>分析</strong><a href="{{ url_for('analysis') }}">今週を振り返る →</a></article>
+</div>
+<div class="grid two">
+  <section class="panel"><div class="section-head"><h2>今日の予定</h2><a href="{{ url_for('schedules') }}">すべて見る</a></div>
+    {% if today_items %}<div class="list">{% for s in today_items %}<div class="list-row"><div><b>{{ s.title }}</b><div class="muted">{{ s.activity }} · {{ "毎週" if s.repeat_type=="毎週" else "1回のみ" }}</div></div><span>{{ s.start.strftime("%H:%M") }}–{{ s.end.strftime("%H:%M") }}</span></div>{% endfor %}</div>{% else %}<p class="empty">今日の予定はありません。</p>{% endif %}
+  </section>
+  <section class="panel"><div class="section-head"><h2>最近の実績</h2><a href="{{ url_for('records') }}">すべて見る</a></div>
+    {% if recent %}<div class="list">{% for r in recent %}<div class="list-row"><div><b>{{ r.activity }}{% if r.detail %} · {{ r.detail }}{% endif %}</b><div class="muted">{{ r.result_date.strftime("%Y-%m-%d") }}</div></div><span>{{ "%.1f"|format(r.duration_minutes/60) }} h</span></div>{% endfor %}</div>{% else %}<p class="empty">まだ実績がありません。</p>{% endif %}
+  </section>
+</div>
+{% endblock %}

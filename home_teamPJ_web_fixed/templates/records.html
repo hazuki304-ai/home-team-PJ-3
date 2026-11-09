@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block title %}実績管理{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">ACTIVITY LOG</div><h1>実績の記録</h1><p class="muted">実際に行った活動と時間を記録します。</p></div></div>
+<section class="panel"><h2>実績を追加</h2>
+<form method="post" class="form-grid">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label>日付<input type="date" name="result_date" value="{{ today.isoformat() }}" required></label>
+<label>活動<select name="activity">{% for a in activities %}<option>{{ a }}</option>{% endfor %}</select></label>
+<label class="span2">内容<input name="detail" maxlength="160" placeholder="例：二次関数の問題演習"></label>
+<label>開始時刻<input type="time" name="start" value="09:00" required></label>
+<label>終了時刻<input type="time" name="end" value="10:00" required></label>
+<label class="span2">関連する予定（任意）<select name="schedule_id"><option value="">関連付けない</option>{% for s in my_schedules %}<option value="{{ s.id }}">{{ s.title }}</option>{% endfor %}</select></label>
+<div class="span2"><button class="btn btn-primary">実績を保存</button><p class="hint">終了時刻が開始時刻より早い場合は、翌日の時刻として計算します。</p></div>
+</form></section>
+<section class="panel"><h2>実績一覧（直近100件）</h2>
+{% if items %}<div class="table-wrap"><table><thead><tr><th>日付</th><th>活動・内容</th><th>時間</th><th></th></tr></thead><tbody>
+{% for r in items %}<tr><td>{{ r.result_date.isoformat() }}</td><td>{{ r.activity }}{% if r.detail %}<div class="muted">{{ r.detail }}</div>{% endif %}</td><td>{{ "%.1f"|format(r.duration_minutes/60) }} h</td><td><form method="post" action="{{ url_for('delete_record',rid=r.id) }}" onsubmit="return confirm('削除しますか？')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-danger btn-small">削除</button></form></td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="empty">実績はまだありません。</p>{% endif %}
+</section>
+{% endblock %}
